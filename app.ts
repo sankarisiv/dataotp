@@ -1,39 +1,13 @@
-import csvtojson from "csvtojson"
-import mongoose from "mongoose"
-import fs from "fs"
-import { datamodel } from './model'
-
-const csvfilepath = "simple.csv"
-csvtojson()
-    .fromFile(csvfilepath)
-    .then((jsonobj) => {
-
-        console.log(jsonobj)
-        const info = fs.writeFileSync('output.json', JSON.stringify(jsonobj))
-        mongoose.connect("mongodb://0.0.0.0:27017/csv", async () => {
-            console.log("database connected")
-            const response = JSON.parse(JSON.stringify(jsonobj))
-            //     const data={
-            //     name:response[0].name,
-            //     address:response[0].address,
-            //     phno:response[0].phno,
-            //     qualification:response[0].qualification
-            // }
-            const jsondata = datamodel.create(response)
-
-            //     console.log("response",response)
-            // const savedData=await datamodel.create(response)
-            // console.log({savedData})
-            console.log("inserted...")
-        })
-        
-    })
-
-
-
-
-
-
-
-
-
+import express, { Request, Response } from "express";
+import routes from './router';
+const app = express();
+import "./database"
+app.use(express.json())
+app.use('/', routes)
+app.get('/', (req: Request, res: Response) => {
+    res.send('Requst success')
+})
+let port="6000"
+app.listen(port, () => {
+    console.log('server is running at',port)
+})
